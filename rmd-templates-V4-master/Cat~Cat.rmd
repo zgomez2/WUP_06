@@ -1,0 +1,58 @@
+---
+title: "Cat~Cat"
+author: "Dr K"
+date: "November 25, 2018"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 2 x 2  Chisq or Fisher
+
+This is a template to serve as an example (cut and paste, change variable names)  
+we use the ucdavis1 dataset from the tigerstats package.
+
+```{r include=FALSE}
+require(tidyverse)
+require(tigerstats)
+data(ucdavis1)
+davisdata <- na.omit(ucdavis1)
+```
+
+
+###Plot barplots
+
+```{r}
+barchartGC(~class + Sex,data=ucdavis1)
+barchartGC(~class + Sex,data=ucdavis1, type="percent")
+
+```
+```{r}
+dd2 <- davisdata %>% group_by(class,Sex) %>% summarize(count=n()) %>% mutate(prcnt=count/sum(count))
+
+basicC <- ggplot(dd2,aes(x=class,y=count,fill=Sex))
+basicC + geom_bar(stat="identity",position="dodge")
+#Now for percentage plot
+
+basicCC <- ggplot(dd2,aes(x=class,y=prcnt*100,fill=Sex)) 
+basicCC + geom_bar(stat="identity", position = "dodge")
+```
+  
+###Numerical Summaries  
+
+```{r}
+table1 <- xtabs(~class + Sex, data=davisdata)
+rowPerc(table1)
+colPerc(table1)
+```
+##Inferential  
+
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+
